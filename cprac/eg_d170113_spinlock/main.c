@@ -8,6 +8,8 @@ pthread_t ptrecvdispatch;
 pthread_t ptdomotocell;
 pthread_t ptwhomai;
 
+unsigned long long int cnt;
+
 void thread_handler_close(void) {
     pthread_cancel(ptrecvdispatch);
     pthread_cancel(ptdomotocell);
@@ -19,10 +21,9 @@ void ptwhomai_main(void) {
     pthread_detach(pthread_self());
 
 	  while(1){
-		  printf("[Debug] I am the ptwhomai_main\n");
-		  //pthread_spin_lock(&g_spin);
-		  //pthread_spin_unlock(&g_spin);
-		  usleep(1000);
+          cnt++;
+          if((cnt%100000000) == 0)
+		    printf("[Debug] cnt = %lld\n", cnt);		  		  
 	  }
 	  return;
 }
@@ -33,6 +34,7 @@ void ptrecvdispatch_main(void) {
 
 	  while(1){
 		  pthread_spin_lock(&g_spin);
+            sleep(5);
 		  pthread_spin_unlock(&g_spin);
 		  usleep(1000);
 	  }
@@ -75,7 +77,7 @@ int main(int argc, char *argv[])
     if (status != 0) {
         printf("Failed to create ptwhomai thread with status = %d\n", status);
     }
-    sleep(3);
+    sleep(10);
     //while(1);
  	  thread_handler_close();
     return (0);
